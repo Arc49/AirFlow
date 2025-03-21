@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalAdaptiveApi::class)
 @Composable
-internal fun SettingsTab(modifier: Modifier) {
+internal fun HowToTab(modifier: Modifier) {
     var showContent by remember { mutableStateOf(false) }
     val greeting = remember { Greeting().greet() }
     var loading by remember { mutableStateOf(true) }

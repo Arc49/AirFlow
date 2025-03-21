@@ -2,8 +2,8 @@ package com.arc49.airflow.presentations.screens
 
 import airflow.composeapp.generated.resources.Res
 import airflow.composeapp.generated.resources.daily
+import airflow.composeapp.generated.resources.idea
 import airflow.composeapp.generated.resources.scan
-import airflow.composeapp.generated.resources.setting
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -23,8 +23,8 @@ import androidx.compose.ui.text.withStyle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.arc49.airflow.presentations.tabs.HowToTab
 import com.arc49.airflow.presentations.tabs.RoutineTab
-import com.arc49.airflow.presentations.tabs.SettingsTab
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveAlertDialog
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBar
 import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveNavigationBarItem
@@ -90,7 +90,7 @@ class Main: Screen {
             AnimatedContent(targetState = activeTab) { selectedTab ->
                 when (selectedTab) {
                     Tabs.Routine -> RoutineTab(Modifier.padding(it))
-                    Tabs.Settings -> SettingsTab(Modifier.padding(it))
+                    Tabs.Settings -> HowToTab(Modifier.padding(it))
 //                    Tabs.Scan -> ScanTab(Modifier.padding(it), snackbarHostState, onCamera = {
 //                        navigator.push(Camera())
 //                    })
@@ -118,8 +118,8 @@ class Main: Screen {
             )
             AdaptiveNavigationBarItem(
                 selected = activeTab == Tabs.Settings,
-                icon = { Icon(painterResource(Res.drawable.setting), contentDescription = null) },
-                label = { Text("settings") },
+                icon = { Icon(painterResource(Res.drawable.idea), contentDescription = null) },
+                label = { Text("how to") },
                 onClick = { activeTab = Tabs.Settings }
             )
         }
