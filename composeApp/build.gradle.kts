@@ -69,6 +69,11 @@ kotlin {
             implementation("androidx.datastore:datastore-preferences:1.0.0")
             implementation("androidx.datastore:datastore-preferences-core:1.0.0")
 
+            // SupaBase
+            implementation("io.github.jan-tennert.supabase:gotrue-kt:1.2.0") // auth
+            implementation("io.github.jan-tennert.supabase:postgrest-kt:1.2.0") // db
+            implementation("io.github.jan-tennert.supabase:realtime-kt:1.2.0") // opzionale
+
             //KMP Auth
             implementation(libs.kmpauth.google) //Google One Tap Sign-In
             implementation(libs.kmpauth.uihelper)
