@@ -41,7 +41,6 @@ class Main: Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-
         var showDialog by remember { mutableStateOf(false) }
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -72,15 +71,6 @@ class Main: Screen {
                             }
                         )
                     }
-                    ,
-//                    actions = {
-//                        TextButton(onClick = { showDialog = true }, colors = ButtonColors(Color.Transparent, Color.White, Color.Transparent, Color.Transparent)) {
-//                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-//                                Image(painterResource(Res.drawable.fire), contentDescription = null)
-//                                Text("8")
-//                            }
-//                        }
-//                    }
                 )
             },
             bottomBar = {
@@ -91,9 +81,6 @@ class Main: Screen {
                 when (selectedTab) {
                     Tabs.Routine -> RoutineTab(Modifier.padding(it))
                     Tabs.Settings -> HowToTab(Modifier.padding(it))
-//                    Tabs.Scan -> ScanTab(Modifier.padding(it), snackbarHostState, onCamera = {
-//                        navigator.push(Camera())
-//                    })
                     Tabs.Scan -> {}
                 }
             }

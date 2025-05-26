@@ -1,99 +1,268 @@
 package com.arc49.airflow.presentations.tabs
 
-import airflow.composeapp.generated.resources.Res
-import airflow.composeapp.generated.resources.compose_multiplatform
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.arc49.airflow.Greeting
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveButton
-import io.github.alexzhirkevich.cupertino.adaptive.AdaptiveCircularProgressIndicator
+import androidx.compose.ui.unit.sp
 import io.github.alexzhirkevich.cupertino.adaptive.ExperimentalAdaptiveApi
-import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
-import kotlin.time.Duration.Companion.milliseconds
+
+data class Exercise(
+    val id: String,
+    val name: String,
+    val sets: Int,
+    val reps: Int,
+    val description: String
+)
+
+data class Routine(
+    val id: String,
+    val title: String,
+    val description: String,
+    val exercises: List<Exercise>
+)
 
 @OptIn(ExperimentalAdaptiveApi::class)
 @Composable
 internal fun RoutineTab(modifier: Modifier) {
-    var showContent by remember { mutableStateOf(false) }
-    val greeting = remember { Greeting().greet() }
-    var loading by remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        delay(800.milliseconds)
-        loading = false
+    var selectedRoutine by remember { mutableStateOf<Routine?>(null) }
+    val haptic = LocalHapticFeedback.current
+    
+    val routines = remember {
+        listOf(
+            Routine(
+                id = "1",
+                title = "Sprint Training",
+                description = "Classic HIIT training for maximum bone stimulation",
+                exercises = listOf(
+                    Exercise("1", "HIIT Sprints", 5, 8, "20-30 seconds sprints with 1 minute rest"),
+                    Exercise("2", "Hill Sprints", 5, 8, "15-20 seconds uphill sprints"),
+                    Exercise("3", "AirFlow Breathing", 3, 1, "15 minutes of alternating high-intensity and slow breathing")
+                )
+            ),
+            Routine(
+                id = "2",
+                title = "Strength Training",
+                description = "Multi-joint exercises for maximum bone load",
+                exercises = listOf(
+                    Exercise("1", "Squats", 4, 8, "Focus on form and depth"),
+                    Exercise("2", "Deadlifts", 3, 6, "Keep back straight"),
+                    Exercise("3", "Overhead Press", 3, 8, "Full range of motion"),
+                    Exercise("4", "Bench Press", 3, 8, "Control the weight"),
+                    Exercise("5", "Neck Harness", 3, 10, "Isometric holds for jaw development")
+                )
+            ),
+            Routine(
+                id = "3",
+                title = "GH and IGF-1 Maximizing",
+                description = "Evening circuit training to boost growth hormones",
+                exercises = listOf(
+                    Exercise("1", "Circuit Training", 3, 1, "20 minutes of squats, push-ups, deadlifts, pull-ups with minimal rest"),
+                    Exercise("2", "All-out Sprints", 5, 1, "30 seconds maximum effort"),
+                    Exercise("3", "AirFlow Breathing", 3, 1, "15 minutes of alternating high-intensity and slow breathing")
+                )
+            )
+        )
     }
 
-    Column (
-        modifier = modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        modifier = modifier.fillMaxSize()
     ) {
-        if (loading) {
-            Column(modifier = modifier.fillMaxSize().padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                    AdaptiveCircularProgressIndicator()
-                    Text("Loading...")
-                }
-            }
-        } else {
-            var inputText by remember { mutableStateOf("") }
-            Box(modifier = Modifier.imePadding()) {
-                BasicTextField(
-                    textStyle = TextStyle(color = Color.White),
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.DarkGray, shape = RoundedCornerShape(4.dp))
-                        .padding(8.dp),
-                    decorationBox = { innerTextField ->
-                        if (inputText.isEmpty()) {
-                            Text(
-                                text = "Type your request here...",
-                                color = Color.White
-                            )
-                        }
-                        innerTextField()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(routines) { routine ->
+                RoutineCard(
+                    routine = routine,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        selectedRoutine = routine
                     }
                 )
             }
-            AdaptiveButton(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+        }
+
+        AnimatedVisibility(
+            visible = selectedRoutine != null,
+            enter = slideInVertically() + fadeIn(),
+            exit = slideOutVertically() + fadeOut()
+        ) {
+            selectedRoutine?.let { routine ->
+                RoutineDetail(
+                    routine = routine,
+                    onClose = { selectedRoutine = null }
+                )
             }
-            AnimatedVisibility(showContent) {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        }
+    }
+}
+
+@Composable
+private fun RoutineCard(
+    routine: Routine,
+    onClick: () -> Unit
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(scale)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.DarkGray
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = routine.title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = routine.description,
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${routine.exercises.size} exercises",
+                color = Color.White.copy(alpha = 0.5f),
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun RoutineDetail(
+    routine: Routine,
+    onClose: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.DarkGray
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = routine.title,
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(onClick = onClose) {
+                    Text(
+                        text = "×",
+                        color = Color.White,
+                        fontSize = 24.sp
+                    )
                 }
             }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = routine.description,
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 16.sp
+            )
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(routine.exercises) { exercise ->
+                    ExerciseItem(exercise = exercise)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseItem(
+    exercise: Exercise
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.DarkGray.copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = exercise.name,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "${exercise.sets} sets × ${exercise.reps} reps",
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 16.sp
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = exercise.description,
+                color = Color.White.copy(alpha = 0.5f),
+                fontSize = 14.sp
+            )
         }
     }
 }

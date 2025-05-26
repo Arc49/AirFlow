@@ -39,6 +39,19 @@ kotlin {
 
             //MLkit
             implementation(libs.face.detection)
+
+            // ExoPlayer
+            implementation("androidx.media3:media3-exoplayer:1.2.1")
+            implementation("androidx.media3:media3-ui:1.2.1")
+
+            // CameraX
+            implementation("androidx.camera:camera-core:1.3.1")
+            implementation("androidx.camera:camera-camera2:1.3.1")
+            implementation("androidx.camera:camera-lifecycle:1.3.1")
+            implementation("androidx.camera:camera-view:1.3.1")
+
+            // MediaPipe
+            implementation("com.google.mediapipe:tasks-vision:0.10.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -51,6 +64,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             implementation("androidx.annotation:annotation:1.7.3")
+
+            // DataStore
+            implementation("androidx.datastore:datastore-preferences:1.0.0")
+            implementation("androidx.datastore:datastore-preferences-core:1.0.0")
 
             //KMP Auth
             implementation(libs.kmpauth.google) //Google One Tap Sign-In
@@ -103,6 +120,12 @@ kotlin {
             implementation(libs.purchases.datetime)   // Optional
             implementation(libs.purchases.either)     // Optional
             implementation(libs.purchases.result)
+
+            // Compose Markdown
+            implementation("com.github.jeziellago:compose-markdown:0.3.6")
+            
+            // Compose Video Player
+            implementation("com.github.jeziellago:compose-video-player:0.3.6")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
